@@ -16,7 +16,7 @@ from langsmith import Client
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 # from streamlit_extras.buy_me_a_coffee import button
-from langchain_core.callback import BaseCallbackHandler
+from langchain_core.callbacks import BaseCallbackHandler
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -110,7 +110,7 @@ if uploaded_file is not None:
           # )
       chat_box = st.empty()
       stream_handler = StreamHandler(chat_box)
-      generate_llm = ChatOpenAI(model="gpt-5.4-nano", temperature=0, openai_api_key=openai_key, streaming=True, callbacks=[steam_handler])
+      generate_llm = ChatOpenAI(model="gpt-5.4-nano", temperature=0, openai_api_key=openai_key, streaming=True, callbacks=[stream_handler])
       def format_docs(docs):
         return "\n\n".join(doc.page_content for doc in docs)
       rag_chain=(
