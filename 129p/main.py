@@ -15,7 +15,7 @@ from langchain_openai import ChatOpenAI
 from langsmith import Client
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from streamlit_extras.buy_me_a_coffee import button
+# from streamlit_extras.buy_me_a_coffee import button
 from langchain.callbacks.base import BaseCallbackHandler
 from dotenv import load_dotenv
 load_dotenv()
