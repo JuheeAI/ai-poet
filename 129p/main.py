@@ -84,12 +84,11 @@ if uploaded_file is not None:
   if st.button("질문하기"):
     with st.spinner('Wait for it...'):
       #Retriever
-      question = "아내가 먹고 싶어하는 음식은 무엇이야?"
       llm = ChatOpenAI(temperature=0)
       retriever_from_llm = MultiQueryRetriever.from_llm(
         retriever=db.as_retriever(), llm=llm
       )
-      docs = retriever_from_llm.invoke(question)
+      # docs = retriever_from_llm.invoke(question)
       # print(len(docs))
       # print(docs)
 
