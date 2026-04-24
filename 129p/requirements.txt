@@ -8,3 +8,4 @@ ctransformers
 pypdf
 langchain-text-splitters
 langchain-chroma
+pysqlite3-binary
