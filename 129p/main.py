@@ -22,6 +22,9 @@ load_dotenv()
 st.title("ChatPDF")
 st.write("--")
 
+#OpenAI 키 입력받기
+openai_key = st.text_input('OPENAI_API_KEY', type="password")
+
 # 파일 업로드
 uploaded_file = st.file_uploader("PDF 파일을 올려주세요!", type=['pdf'])
 st.write("--")
@@ -54,6 +57,7 @@ if uploaded_file is not None:
   #Embedding
   embeddings_model = OpenAIEmbeddings(
     model="text-embedding-3-large",
+    openai_api_key=openai_key
   )
 
   import chromadb
@@ -61,6 +65,15 @@ if uploaded_file is not None:
 
   #Chroma DB
   db = Chroma.from_documents(texts, embeddings_model)
+
+  #스트리밍 처리할 Handler 생성
+  class StreamHandler(BaseCallbackHandler):
+    def __init__(self, container, initial_text=""):
+      self.container = container
+      self.text=initial_text
+    def on_llm_new_token(self, token:str, **kwargs) -> None:
+      self.text+=token
+      self.container.markdown(self.text)
 
   #User Input
   st.header("PDF에게 질문해보세요!")
@@ -84,16 +97,27 @@ if uploaded_file is not None:
       prompt = client.pull_prompt("rlm/rag-prompt")
 
       #Generate
+          # def format_docs(docs):
+          #   return "\n\n".join(doc.page_content for doc in docs)
+
+          # rag_chain = (
+          #   {"context": retriever_from_llm | format_docs, "question": RunnablePassthrough()}
+          #   | prompt
+          #   | llm
+          #   | StrOutputParser()
+          # )
+      chat_box = st.empty()
+      stream_handler = StreamHandler(chat_box)
+      generate_llm = ChatOpenAI(model="gpt-5.4-nano", temperature=0, openai_api_key=openai_key, streaming=True, callbacks=[steam_handler])
       def format_docs(docs):
         return "\n\n".join(doc.page_content for doc in docs)
-
-      rag_chain = (
+      rag_chain=(
         {"context": retriever_from_llm | format_docs, "question": RunnablePassthrough()}
         | prompt
-        | llm
+        | generate_llm
         | StrOutputParser()
       )
 
       #Question
-      result = rag_chain.invoke("아내가 먹고 싶어하는 음식은 뭐야?")
+      result = rag_chain.invoke(question)
       st.write(result)
