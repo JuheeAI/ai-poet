@@ -16,7 +16,7 @@ from langsmith import Client
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 # from streamlit_extras.buy_me_a_coffee import button
-from langchain_core.callback.base import BaseCallbackHandler
+from langchain_core.callback import BaseCallbackHandler
 from dotenv import load_dotenv
 load_dotenv()
 
